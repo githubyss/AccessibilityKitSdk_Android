@@ -1,0 +1,126 @@
+plugins {
+    id 'kotlin-android'
+    id 'kotlin-kapt'
+}
+
+def isShellApp = project.getName() == rootProject.shellApp
+def isLaunchApp = project.getName() == rootProject.launchApp
+
+if (isShellApp) {
+    println "isShellApp: ${isShellApp}"
+}
+
+if (isLaunchApp) {
+    println "isLaunchApp: ${isLaunchApp}"
+    apply plugin: 'com.android.application'
+} else {
+    apply plugin: 'com.android.library'
+}
+
+
+apply from: "${rootDir}/config/buildConfigs.gradle"
+apply from: "${rootDir}/config/optionConfigs.gradle"
+apply from: "${rootDir}/config/featureConfigs.gradle"
+apply from: "${rootDir}/config/versionConfigs.gradle"
+apply from: "${rootDir}/config/signingConfigs.gradle"
+apply from: "${rootDir}/config/libConfigs.gradle"
+
+android {
+    resourcePrefix 'acckit_'
+
+    defaultConfig {
+        versionCode 1
+        versionName "1.0"
+    }
+
+    buildTypes {
+        debug {
+            if (isLaunchApp) {
+                shrinkResources feature.isMinifyEnabled
+            }
+        }
+
+        release {
+            if (isLaunchApp) {
+                shrinkResources true
+            }
+        }
+    }
+
+    flavorDimensions 'library'
+    productFlavors {
+        if (isLaunchApp) {
+            app {
+                dimension 'library'
+                applicationId 'com.githubyss.mobile.common.kit'
+                versionCode 1
+                versionName "1.0"
+                manifestPlaceholders = [APP_NAME: "通用工具库"]
+            }
+        }
+    }
+
+    sourceSets {
+        main {
+            java {
+                srcDirs 'src/main/java'
+                srcDirs 'src/main/kotlin'
+            }
+            res {
+                srcDirs 'src/main/res'
+                srcDirs 'src/main/res/common'
+
+                srcDirs 'src/main/res/activity'
+                srcDirs 'src/main/res/fragment'
+            }
+            manifest {
+                srcFile 'src/main/AndroidManifest.xml'
+            }
+            jniLibs {
+                srcDirs 'libs'
+            }
+        }
+
+        if (isLaunchApp) {
+            app {
+                java {
+                    srcDirs 'src/app/java'
+                    srcDirs 'src/app/kotlin'
+                }
+                res {
+                    srcDirs 'src/app/res'
+                    srcDirs 'src/app/res/common'
+
+                    srcDirs 'src/app/res/homepage'
+                    srcDirs 'src/app/res/binding_inline'
+                    srcDirs 'src/app/res/binding_reflect'
+                    srcDirs 'src/app/res/compose'
+                    srcDirs 'src/app/res/json_utils'
+                    srcDirs 'src/app/res/lifecycle'
+                    srcDirs 'src/app/res/mvvm'
+                    srcDirs 'src/app/res/mvi'
+                }
+                manifest {
+                    srcFile 'src/app/AndroidManifest.xml'
+                }
+            }
+        }
+
+        test {
+            java {
+                srcDirs 'src/test/java'
+                srcDirs 'src/test/kotlin'
+            }
+        }
+
+        all {
+            // set -> println "集合 ${set.name} 的文件是 ${set.java.srcDirs}"
+        }
+    }
+}
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+
+    implementation project(':CommonKitSdk_Android')
+}
