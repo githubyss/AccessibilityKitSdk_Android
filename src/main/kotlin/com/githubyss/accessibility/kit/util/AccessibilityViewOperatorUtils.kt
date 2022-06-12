@@ -85,7 +85,7 @@ suspend fun openAppByNotification(event: AccessibilityEvent? = null) = withConte
  * @return
  */
 suspend fun tapClickableSelf(tapNodeInfo: AccessibilityNodeInfo?, isTapForcibly: Boolean = false, onTap: (tapState: String) -> Unit = {}): Boolean = withContext(Dispatchers.Default) {
-    // logStart("tapClickableSelf", 5)
+    logStart("tapClickableSelf", 1)
     // logMiddle("tapNodeInfo: $tapNodeInfo")
 
     // 默认点击成功标志-未成功
@@ -99,17 +99,21 @@ suspend fun tapClickableSelf(tapNodeInfo: AccessibilityNodeInfo?, isTapForcibly:
     }
     // 节点不为空，则尝试点击
     else if (tapNodeInfo.isClickable || isTapForcibly) {
-        logMiddle("尝试操作节点单击")
+        logMiddle("尝试操作节点单击-自身")
         isTapSucceed = tapNodeInfo.performAction(AccessibilityNodeInfo.ACTION_CLICK)
 
-        if (isTapSucceed) {
-            logMiddle("操作成功")
-            tapState = TapState.CLICKED
+        tapState = if (isTapSucceed) {
+            logMiddle("操作单击成功-自身")
+            TapState.CLICKED
+        }
+        else {
+            logMiddle("操作单击失败-自身")
+            TapState.CLICK_FAILED
         }
     }
 
     // logMiddle("点击状态『$tapState』")
-    // logEnd("tapClickableSelf", 5)
+    logEnd("tapClickableSelf", 1)
 
     // 回调点击接口，传回点击状态
     onTap(tapState)
@@ -126,7 +130,7 @@ suspend fun tapClickableSelf(tapNodeInfo: AccessibilityNodeInfo?, isTapForcibly:
  * @return
  */
 suspend fun tapClickableParent(tapNodeInfo: AccessibilityNodeInfo?, onTap: (tapState: String) -> Unit = {}): Boolean = withContext(Dispatchers.Default) {
-    // logStart("tapClickableParent", 5)
+    logStart("tapClickableParent", 1)
     // logMiddle("tapNodeInfo: $tapNodeInfo")
 
     // 默认点击成功标志-未成功
@@ -145,12 +149,16 @@ suspend fun tapClickableParent(tapNodeInfo: AccessibilityNodeInfo?, onTap: (tapS
         while (parentNodeInfo != null) {
             // 找到可点击节点，进行点击
             if (parentNodeInfo.isClickable) {
-                logMiddle("尝试操作节点单击")
+                logMiddle("尝试操作节点单击-递归父节点")
                 isTapSucceed = parentNodeInfo.performAction(AccessibilityNodeInfo.ACTION_CLICK)
 
-                if (isTapSucceed) {
-                    logMiddle("操作成功")
-                    tapState = TapState.CLICKED
+                tapState = if (isTapSucceed) {
+                    logMiddle("操作单击成功-递归父节点")
+                    TapState.CLICKED
+                }
+                else {
+                    logMiddle("操作单击失败-递归父节点")
+                    TapState.CLICK_FAILED
                 }
 
                 break
@@ -160,7 +168,7 @@ suspend fun tapClickableParent(tapNodeInfo: AccessibilityNodeInfo?, onTap: (tapS
     }
 
     // logMiddle("点击状态『$tapState』")
-    // logEnd("tapClickableParent", 5)
+    logEnd("tapClickableParent", 1)
 
     // 回调点击接口，传回点击状态
     onTap(tapState)
@@ -200,14 +208,18 @@ suspend fun tap(service: AccessibilityService?, point: Point, duration: Long = D
         isTapSucceed = service?.dispatchGesture(gestureDesc, null, null) ?: false
     }
 
-    if (isTapSucceed) {
-        logMiddle("操作成功")
+    tapState = if (isTapSucceed) {
+        logMiddle("操作单击成功")
         when {
             duration <= TAP_TIMEOUT -> logMiddle("短按 point: $point")
             duration >= LONG_PRESS_TIMEOUT -> logMiddle("长按 point: {${point.x}, ${point.y}}")
         }
 
-        tapState = TapState.CLICKED
+        TapState.CLICKED
+    }
+    else {
+        logMiddle("操作单击失败")
+        TapState.CLICK_FAILED
     }
 
     // logMiddle("点击状态『$tapState』")
@@ -281,30 +293,30 @@ suspend fun tapMulti(service: AccessibilityService?, points: List<Point>, durati
     // 默认点击状态-未点击
     var tapState: String = TapState.NO_CLICKED
 
-    val isTapSucceedList: ArrayList<Boolean> = arrayListOf()
-
     logMiddle("尝试操作坐标列表连击")
-    points.forEach {
-        isTapSucceedList.add(tap(service, it, duration))
-        delay(interval)
-    }
-
-    if (isTapSucceedList.isNotEmpty() && isTapSucceedList.size == 6) {
-        var isTap = isTapSucceedList[0]
-        isTapSucceedList.forEach {
-            isTap = isTap && it
+    run points@{
+        points.forEach {
+            if (!tap(service, it, duration)) {
+                isTapSucceed = false
+                return@points
+            }
+            delay(interval)
+            isTapSucceed = true
         }
-        isTapSucceed = isTap
     }
 
-    if (isTapSucceed) {
-        logMiddle("操作成功")
+    tapState = if (isTapSucceed) {
+        logMiddle("操作连击成功")
         when {
             duration <= TAP_TIMEOUT -> logMiddle("短按 points: $points")
             duration >= LONG_PRESS_TIMEOUT -> logMiddle("长按 points: {${points.map { it.x }}, ${points.map { it.y }}")
         }
 
-        tapState = TapState.CLICKED
+        TapState.CLICKED
+    }
+    else {
+        logMiddle("操作连击失败")
+        TapState.CLICK_FAILED
     }
 
     // logMiddle("点击状态『$tapState』")

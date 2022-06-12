@@ -36,7 +36,7 @@ private const val TAG: String = "AccessibilityNodeFindUtils"
  * @param event 无障碍辅助事件
  * @return
  */
-suspend fun getRootNodeInfo(service: AccessibilityService?, event: AccessibilityEvent?): AccessibilityNodeInfo? = withContext(Dispatchers.Default) {
+fun getRootNodeInfo(service: AccessibilityService?, event: AccessibilityEvent?): AccessibilityNodeInfo? {
     // logStart("getRootNodeInfo")
 
     var rootNodeInfo: AccessibilityNodeInfo? = null
@@ -61,7 +61,7 @@ suspend fun getRootNodeInfo(service: AccessibilityService?, event: Accessibility
     // logMiddle("rootNodeInfo: ${if (rootNodeInfo == null) "空" else "不空"}")
     // logEnd("getRootNodeInfo")
 
-    rootNodeInfo
+    return rootNodeInfo
 }
 
 /**
@@ -123,7 +123,7 @@ suspend fun findNodeInfoByIdFirstMatched(viewId: String = "", rootNodeInfo: Acce
             nodeInfo = nodeInfoList[0]
         }
         else -> {
-            logMiddle("$viewId nodeInfo is not found.")
+            // logMiddle("$viewId nodeInfo is not found.")
         }
     }
 
@@ -191,7 +191,7 @@ suspend fun findNodeInfoByTextFirstMatched(text: String = "", rootNodeInfo: Acce
             nodeInfo = nodeInfoList[0]
         }
         else -> {
-            logMiddle("$text nodeInfo is not found.")
+            // logMiddle("$text nodeInfo is not found.")
         }
     }
 
