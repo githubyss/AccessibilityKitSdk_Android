@@ -209,24 +209,24 @@ suspend fun findNodeInfoByTextFirstMatched(text: String = "", rootNodeInfo: Acce
  */
 suspend fun findNodeInfoByClassNameFirstMatched(viewClassName: String, rootNodeInfo: AccessibilityNodeInfo?): AccessibilityNodeInfo? = withContext(Dispatchers.Default) {
     // logStart("findNodeInfoByClassNameFirstMatched", 5)
-    logMiddle("viewClassName: $viewClassName")
+    // logMiddle("viewClassName: $viewClassName")
 
     var findNodeInfo: AccessibilityNodeInfo? = null
 
     // 根节点不为空，则继续，进行寻找
     if (rootNodeInfo != null) {
         val childCount: Int = rootNodeInfo.childCount
-        logMiddle("childCount: $childCount")
+        // logMiddle("childCount: $childCount")
 
         // 遍历寻找
-        logMiddle("进行遍历寻找")
+        // logMiddle("进行遍历寻找")
         for (i in 0 until childCount) {
             // 获取子节点
             val childNodeInfo: AccessibilityNodeInfo? = rootNodeInfo.getChild(i)
             // 子节点不为空，则继续，进行类型匹配
             if (childNodeInfo != null) {
                 val childClassName: String = childNodeInfo.className?.toString() ?: ""
-                logMiddle("childIndex: $i, childClassName: $childClassName")
+                // logMiddle("childIndex: $i, childClassName: $childClassName")
 
                 // 匹配到指定类型的节点
                 if (childClassName == viewClassName) {
@@ -236,7 +236,7 @@ suspend fun findNodeInfoByClassNameFirstMatched(viewClassName: String, rootNodeI
                 }
                 else {
                     // 递归寻找
-                    logMiddle("进行递归寻找")
+                    // logMiddle("进行递归寻找")
                     val nodeInfo: AccessibilityNodeInfo? = findNodeInfoByClassNameFirstMatched(viewClassName, childNodeInfo)
                     if (nodeInfo != null) {
                         logMiddle("递归寻到指定类型的节点")
