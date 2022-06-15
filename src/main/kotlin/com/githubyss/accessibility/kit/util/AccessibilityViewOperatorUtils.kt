@@ -76,7 +76,7 @@ suspend fun openAppByNotification(event: AccessibilityEvent? = null) = withConte
 /** ********** Tap Node ********** */
 
 /**
- * 点击可点击节点
+ * 点击可点击节点-自身
  * 点击指定的节点，通过入参决定是否需要判断节点的可点击性
  *
  * @param tapNodeInfo 待点击节点信息
@@ -85,7 +85,7 @@ suspend fun openAppByNotification(event: AccessibilityEvent? = null) = withConte
  * @return
  */
 suspend fun tapClickableSelf(tapNodeInfo: AccessibilityNodeInfo?, isTapForcibly: Boolean = false, onTap: (tapState: String) -> Unit = {}): Boolean = withContext(Dispatchers.Default) {
-    logStart("tapClickableSelf", 1)
+    logStart("点击可点击节点-自身", 1)
     // logMiddle("tapNodeInfo: $tapNodeInfo")
 
     // 默认点击成功标志-未成功
@@ -113,7 +113,7 @@ suspend fun tapClickableSelf(tapNodeInfo: AccessibilityNodeInfo?, isTapForcibly:
     }
 
     // logMiddle("点击状态『$tapState』")
-    logEnd("tapClickableSelf", 1)
+    logEnd("点击可点击节点-自身", 1)
 
     // 回调点击接口，传回点击状态
     onTap(tapState)
@@ -122,7 +122,7 @@ suspend fun tapClickableSelf(tapNodeInfo: AccessibilityNodeInfo?, isTapForcibly:
 }
 
 /**
- * 点击可点击节点
+ * 点击可点击节点-递归父节点
  * 递归节点本身及其父节点，向父层递归，一层一层判断可点击性，点击最近一个可点击的节点
  *
  * @param tapNodeInfo 待点击节点信息
@@ -130,7 +130,7 @@ suspend fun tapClickableSelf(tapNodeInfo: AccessibilityNodeInfo?, isTapForcibly:
  * @return
  */
 suspend fun tapClickableParent(tapNodeInfo: AccessibilityNodeInfo?, onTap: (tapState: String) -> Unit = {}): Boolean = withContext(Dispatchers.Default) {
-    logStart("tapClickableParent", 1)
+    logStart("点击可点击节点-递归父节点", 1)
     // logMiddle("tapNodeInfo: $tapNodeInfo")
 
     // 默认点击成功标志-未成功
@@ -168,7 +168,7 @@ suspend fun tapClickableParent(tapNodeInfo: AccessibilityNodeInfo?, onTap: (tapS
     }
 
     // logMiddle("点击状态『$tapState』")
-    logEnd("tapClickableParent", 1)
+    logEnd("点击可点击节点-递归父节点", 1)
 
     // 回调点击接口，传回点击状态
     onTap(tapState)
@@ -191,7 +191,7 @@ suspend fun tapClickableParent(tapNodeInfo: AccessibilityNodeInfo?, onTap: (tapS
  * @return
  */
 suspend fun tap(service: AccessibilityService?, point: Point, duration: Long = DEFAULT_TAP_DURATION, onTap: (tapState: String) -> Unit = {}): Boolean = withContext(Dispatchers.Default) {
-    // logStart("tap", 5)
+    logStart("单击指定坐标", 1)
     // logMiddle("point: $point")
 
     // 默认点击成功标志-未成功
@@ -223,7 +223,7 @@ suspend fun tap(service: AccessibilityService?, point: Point, duration: Long = D
     }
 
     // logMiddle("点击状态『$tapState』")
-    // logEnd("tap", 5)
+    logEnd("单击指定坐标", 1)
 
     // 回调点击接口，传回点击状态
     onTap(tapState)
@@ -285,7 +285,7 @@ suspend fun tapDoubleLong(service: AccessibilityService?, point: Point, onTap: (
  * @return
  */
 suspend fun tapMulti(service: AccessibilityService?, points: List<Point>, duration: Long = DEFAULT_TAP_DURATION, interval: Long = DEFAULT_TAP_INTERVAL, onTap: (tapState: String) -> Unit = {}): Boolean = withContext(Dispatchers.Default) {
-    // logStart("tap", 5)
+    logStart("连击指定坐标", 1)
     // logMiddle("points: $points")
 
     // 默认点击成功标志-未成功
@@ -320,7 +320,7 @@ suspend fun tapMulti(service: AccessibilityService?, points: List<Point>, durati
     }
 
     // logMiddle("点击状态『$tapState』")
-    // logEnd("tap", 5)
+    logEnd("连击指定坐标", 1)
 
     // 回调点击接口，传回点击状态
     onTap(tapState)
