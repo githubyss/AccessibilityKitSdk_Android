@@ -33,20 +33,21 @@ private const val TAG: String = "AccessibilityCheckUtils"
  * @param serviceName 无障碍辅助服务名
  * @return
  */
-fun isStartAccessibilityService(serviceName: String = "", context: Context? = ComkitApplicationConfig.getApp()): Boolean {
-    logStart("isStartAccessibilityService", 5)
+fun isAccessibilityServiceEnable(serviceName: String = "", context: Context? = ComkitApplicationConfig.getApp()): Boolean {
+    logStart("isAccessibilityServiceEnable", 5)
     val am = context?.getSystemService(Context.ACCESSIBILITY_SERVICE) as AccessibilityManager
     val serviceInfos = am.getEnabledAccessibilityServiceList(AccessibilityServiceInfo.FEEDBACK_GENERIC)
-    var ret = false
+    var isServiceEnable = false
     for (info in serviceInfos) {
         val id = info.id
         if (id.contains(serviceName)) {
             logMiddle("info.id: $id")
-            ret = true
+            isServiceEnable = true
         }
     }
-    logEnd("isStartAccessibilityService", 5)
-    return ret
+    logMiddle("isAccessibilityServiceEnable >> isServiceEnable: $isServiceEnable")
+    logEnd("isAccessibilityServiceEnable", 5)
+    return isServiceEnable
 }
 
 // fun isAccessibilitySettingsOn(mContext: Context, clazz: Class<out AccessibilityService?>): Boolean {
