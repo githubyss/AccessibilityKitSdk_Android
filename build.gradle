@@ -122,5 +122,8 @@ android {
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
 
+    implementation project(':CommonBaseSdk_Android')
     implementation project(':CommonKitSdk_Android')
+
+    implementation dependenciesLib.kotlinx_coroutines_core
 }

@@ -3,7 +3,7 @@ package com.githubyss.accessibility.kit.util
 import android.accessibilityservice.AccessibilityServiceInfo
 import android.content.Context
 import android.view.accessibility.AccessibilityManager
-import com.githubyss.mobile.common.kit.ComkitApplicationConfig
+import com.githubyss.common.base.application.BaseApplicationHolder
 import com.githubyss.mobile.common.kit.util.logEnd
 import com.githubyss.mobile.common.kit.util.logMiddle
 import com.githubyss.mobile.common.kit.util.logStart
@@ -19,6 +19,7 @@ import com.githubyss.mobile.common.kit.util.logStart
 
 /** ****************************** Properties ****************************** */
 
+/**  */
 private const val TAG: String = "AccessibilityCheckUtils"
 
 
@@ -33,7 +34,7 @@ private const val TAG: String = "AccessibilityCheckUtils"
  * @param serviceName 无障碍辅助服务名
  * @return
  */
-fun isAccessibilityServiceEnable(serviceName: String = "", context: Context? = ComkitApplicationConfig.getApp()): Boolean {
+fun isAccessibilityServiceEnable(serviceName: String = "", context: Context? = BaseApplicationHolder.getApp()): Boolean {
     logStart("isAccessibilityServiceEnable", 5)
     val am = context?.getSystemService(Context.ACCESSIBILITY_SERVICE) as AccessibilityManager
     val serviceInfos = am.getEnabledAccessibilityServiceList(AccessibilityServiceInfo.FEEDBACK_GENERIC)
